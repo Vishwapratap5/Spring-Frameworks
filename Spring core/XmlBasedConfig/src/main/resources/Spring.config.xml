@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+<!--    <bean class="com.guru.CourseModel.Course" name="course" scope="prototype">-->
+<!--        <constructor-arg name="courseID" value="1"/>-->
+<!--        <constructor-arg name="courseName" value="Java Full Stack"/>-->
+<!--        <constructor-arg name="courseDescription" value="Begginer friendly"/>-->
+<!--        <constructor-arg name="courseDuration" value="6 months"/>-->
+<!--    </bean>-->
+
+    <bean class="com.guru.CourseModel.Course" name="course" scope="prototype">
+        <property name="courseID" value="101"/>
+        <property name="courseName" value="Spring Core"/>
+        <property name="courseDescription" value="From XML to Java Config"/>
+        <property name="courseDuration" value="2 months"/>
+    </bean>
+
+</beans>
