@@ -1,11 +1,14 @@
 package com.guru.springsecurity_learning.Model;
 
 
+import com.guru.springsecurity_learning.Enums.CardType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.sql.Date;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter @Setter
@@ -21,22 +24,23 @@ public class Card {
     @JoinColumn(name = "customer_id",nullable = false)
     private Customer customer;
 
-    @Column(name = "card_number")
+    @Column(name = "card_number",unique = true,nullable = false)
     private String cardNumber;
 
     @Column(name = "card_type")
-    private String cardType;
+    @Enumerated(EnumType.STRING)
+    private CardType cardType;
 
     @Column(name = "total_limit")
-    private int totalLimit;
+    private BigDecimal totalLimit;
 
     @Column(name = "amount_used")
-    private int amountUsed;
+    private BigDecimal amountUsed;
 
     @Column(name = "available_amount")
-    private int availableAmount;
+    private BigDecimal availableAmount;
 
     @Column(name = "create_dt")
-    private Date createDt;
+    private LocalDateTime createDt;
 
 }

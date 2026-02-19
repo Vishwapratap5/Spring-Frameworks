@@ -1,6 +1,6 @@
 package com.guru.springsecurity_learning.Service;
 
-import com.guru.springsecurity_learning.DAO.CustomerRepo;
+import com.guru.springsecurity_learning.DAO.CustomerRepository;
 import com.guru.springsecurity_learning.Model.Customer;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,13 +15,13 @@ public class CustomerService {
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private CustomerRepo  customerRepo;
+    private CustomerRepository customerRepository;
 
     public Customer register(Customer customer) {
         String encodedPassword = passwordEncoder.encode(customer.getPassword());
         customer.setPassword(encodedPassword);
-        Customer registeredCustomer= customerRepo.save(customer);
-        if(registeredCustomer.getId() == null) {
+        Customer registeredCustomer= customerRepository.save(customer);
+        if(registeredCustomer.getCustomerId() == null) {
             throw new IllegalStateException("User not persisted");
         }
         return registeredCustomer;

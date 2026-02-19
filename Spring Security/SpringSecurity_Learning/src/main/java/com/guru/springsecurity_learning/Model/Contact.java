@@ -29,9 +29,4 @@ public class Contact {
     @CreationTimestamp
     @Column(nullable = false,updatable = false)
     private LocalDateTime createdAt;
-
-
-    @ManyToOne
-    @JoinColumn(name="customer_id",nullable = false)
-    private Customer customer;
 }

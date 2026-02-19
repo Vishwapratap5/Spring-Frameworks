@@ -1,11 +1,14 @@
 package com.guru.springsecurity_learning.Model;
 
+import com.guru.springsecurity_learning.Enums.LoanType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -19,19 +22,25 @@ public class Loan {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long loanId;
 
-    @ManyToOne
-    @JoinColumn(name = "customer_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
 
+    @Column(nullable = false)
     private LocalDate startDate;
 
-    private String loanType;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private LoanType loanType;
 
-    private Long totalLoanAmount;
+    @Column(nullable = false)
+    private BigDecimal totalLoanAmount;
 
-    private Long totalLoanAmountPaid;
+    @Column(nullable = false)
+    private BigDecimal totalLoanAmountPaid;
 
-    private Long outstandingAmount;
+    @Column(nullable = false)
+    private BigDecimal outstandingAmount;
 
     @CreationTimestamp
     @Column(nullable = false,updatable = false)

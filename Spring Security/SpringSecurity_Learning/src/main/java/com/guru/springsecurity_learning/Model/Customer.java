@@ -1,6 +1,8 @@
 package com.guru.springsecurity_learning.Model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.guru.springsecurity_learning.Enums.AuthProvider;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -27,11 +29,10 @@ public class Customer {
     @NotBlank
     private String customerName;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false)
-    @NotBlank
+    @JsonIgnore
     private String password;
 
     @Column(nullable = false)
@@ -39,9 +40,13 @@ public class Customer {
     @NotBlank
     private String mobileNumber;
 
+
     @Column(nullable = false)
-    @NotBlank
-    private String role;
+    @Enumerated(EnumType.STRING)
+    private AuthProvider authProvider;
+
+    @Column(unique = true)
+    private String providerUserId;
 
     @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL)
     private Account account;
@@ -52,13 +57,21 @@ public class Customer {
 
 
     @OneToMany(mappedBy = "customer")
+    @JsonIgnore
     private List<Card> cards;
 
-    @OneToMany(mappedBy = "customer")
-    private List<Contact> contacts;
 
     @OneToMany(mappedBy = "customer")
+    @JsonIgnore
     private List<Transaction> transactions;
+
+    @OneToMany
+    @JsonIgnore
+    private List<Loan> loans;
+
+    @OneToMany(mappedBy = "customer")
+    @JsonIgnore
+    private List<Authority>  authorities;
 
 
 }

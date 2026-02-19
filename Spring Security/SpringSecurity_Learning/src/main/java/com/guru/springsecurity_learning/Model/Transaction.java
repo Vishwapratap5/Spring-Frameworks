@@ -1,14 +1,15 @@
 package com.guru.springsecurity_learning.Model;
 
+import com.guru.springsecurity_learning.Enums.TransactionType;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @AllArgsConstructor
@@ -16,17 +17,17 @@ import java.time.LocalDateTime;
 @Data
 @Builder
 @Entity
-@Table(name = "transcations")
+@Table(name = "transactions")
 public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long transactionId;
 
-    @ManyToOne
-    @JoinColumn(name = "account_number", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "account_id", nullable = false)
     private Account account;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
 
@@ -35,16 +36,11 @@ public class Transaction {
     private LocalDateTime transactionDate;
 
     @Column(nullable = false)
-    @NotBlank
-    private String transactionType;
+    @Enumerated(EnumType.STRING)
+    private TransactionType transactionType;
 
     @Column(nullable = false)
-    @NotEmpty
-    private Long transactionAmount;
-
-
-    @CreationTimestamp
-    @Column(nullable = false,updatable = false)
-    private LocalDateTime createdAt;
+    @NotNull
+    private BigDecimal transactionAmount;
 
 }
