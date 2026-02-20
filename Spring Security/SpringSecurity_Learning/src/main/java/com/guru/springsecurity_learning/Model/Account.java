@@ -18,7 +18,12 @@ import java.util.List;
 @Data
 @Builder
 @Entity
-@Table(name = "accounts")
+@Table(
+        name = "accounts",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"customer_id", "account_type"})
+        }
+)
 public class Account {
 
     @Id
@@ -40,7 +45,8 @@ public class Account {
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-    @OneToOne
+    // Account
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
 

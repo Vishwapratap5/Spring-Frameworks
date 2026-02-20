@@ -32,7 +32,6 @@ public class JwtValidationFilter extends OncePerRequestFilter {
         String token = header.substring(7);
         if(!jwtService.isTokenValid(token)){
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            filterChain.doFilter(request, response);
             return;
         }
         String userName=jwtService.extractName(token);

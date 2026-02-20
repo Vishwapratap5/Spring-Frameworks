@@ -32,7 +32,7 @@ public class CustomerDetailsService implements UserDetailsService {
 
         Customer foundCustomer= customerRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("Customer "+username+" not found"));
         List<GrantedAuthority> grantedAuthorities = foundCustomer.getAuthorities().stream()
-                                                                                  .map((role)-> new  SimpleGrantedAuthority(role.getName()))
+                                                                                  .map((role)-> new  SimpleGrantedAuthority(role.getRole().name()))
                                                                                   .collect(Collectors.toList());
 
         return User.withUsername(foundCustomer.getEmail())

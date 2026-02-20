@@ -3,6 +3,7 @@ package com.guru.springsecurity_learning.Model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.guru.springsecurity_learning.Enums.AuthProvider;
+import com.guru.springsecurity_learning.Enums.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -25,7 +26,7 @@ public class Customer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long customerId;
 
-    @Column(nullable = false)
+    @Column(nullable = false,unique = true)
     @NotBlank
     private String customerName;
 
@@ -48,8 +49,9 @@ public class Customer {
     @Column(unique = true)
     private String providerUserId;
 
-    @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL)
-    private Account account;
+
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+    private List<Account> accounts;
 
     @CreationTimestamp
     @Column(nullable = false,updatable = false)

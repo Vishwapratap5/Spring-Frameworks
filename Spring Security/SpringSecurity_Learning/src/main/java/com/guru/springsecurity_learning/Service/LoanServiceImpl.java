@@ -5,5 +5,5 @@ import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor
-public class TransactionService {
+public class LoanServiceImpl implements LoanService {
 }

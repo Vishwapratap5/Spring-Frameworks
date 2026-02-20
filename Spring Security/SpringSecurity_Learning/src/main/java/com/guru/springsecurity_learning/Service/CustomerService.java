@@ -1,29 +1,27 @@
 package com.guru.springsecurity_learning.Service;
 
-import com.guru.springsecurity_learning.DAO.CustomerRepository;
-import com.guru.springsecurity_learning.Model.Customer;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
+import com.guru.springsecurity_learning.DTO.CustomerDTOs.CustomerLoginRequestDTO;
+import com.guru.springsecurity_learning.DTO.CustomerDTOs.CustomerRegisterRequestDTO;
+import com.guru.springsecurity_learning.DTO.CustomerDTOs.CustomerResponseDTO;
+import com.guru.springsecurity_learning.Enums.AuthProvider;
+import jakarta.validation.Valid;
 
-@Service
-@AllArgsConstructor
+import java.util.Optional;
 
-public class CustomerService {
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+public interface CustomerService {
 
-    @Autowired
-    private CustomerRepository customerRepository;
+    CustomerResponseDTO localCustomerRegistration(CustomerRegisterRequestDTO customer);
 
-    public Customer register(Customer customer) {
-        String encodedPassword = passwordEncoder.encode(customer.getPassword());
-        customer.setPassword(encodedPassword);
-        Customer registeredCustomer= customerRepository.save(customer);
-        if(registeredCustomer.getCustomerId() == null) {
-            throw new IllegalStateException("User not persisted");
-        }
-        return registeredCustomer;
-    }
+
+    public CustomerResponseDTO loginUser(@Valid CustomerLoginRequestDTO request);
+
+    CustomerResponseDTO oAuthRegistration(String email, String name,
+                                          String providerUserId,
+                                          AuthProvider provider);
+
+    CustomerResponseDTO updateMobileNumber(Long customerId, String mobileNumber);
+
+    Optional<CustomerResponseDTO> findByEmail(String email);
+
+    CustomerResponseDTO getCustomerById(Long customerId);
 }

@@ -1,10 +1,19 @@
 package com.guru.springsecurity_learning.Service;
 
+import com.guru.springsecurity_learning.DTO.ContactDTOs.AdminCreateContactDTO;
+import com.guru.springsecurity_learning.DTO.ContactDTOs.ContactResponseDTO;
 
-import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Service;
+import java.util.List;
 
-@Service
-@AllArgsConstructor
-public class ContactService {
+public interface ContactService {
+
+    List<ContactResponseDTO> getAllContacts();
+
+    ContactResponseDTO getContactById(Long id);
+
+    ContactResponseDTO createContact(AdminCreateContactDTO request);
+
+    ContactResponseDTO updateContact(Long id,AdminCreateContactDTO request);
+
+    ContactResponseDTO deleteContactById(Long id);
 }

@@ -1,17 +1,36 @@
 package com.guru.springsecurity_learning.Controller;
 
+import com.guru.springsecurity_learning.DTO.ContactDTOs.AdminCreateContactDTO;
+import com.guru.springsecurity_learning.DTO.ContactDTOs.ContactResponseDTO;
+import com.guru.springsecurity_learning.Service.ContactServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
-@RequestMapping("/contact")
+@RequestMapping("/public/contact")
 public class ContactController {
-    @GetMapping("/details")
-    public ResponseEntity<String> getContactDetails() {
-        String msg="Contact details";
-        return new  ResponseEntity<>(msg, HttpStatus.OK);
+
+    @Autowired
+    private ContactServiceImpl contactService;
+
+    @GetMapping("/all")
+    public ResponseEntity<List<ContactResponseDTO>> getAllContacts() {
+        List<ContactResponseDTO> contacts=contactService.getAllContacts();
+        return new ResponseEntity<>(contacts, HttpStatus.OK);
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ContactResponseDTO> getContactById(@PathVariable Long id) {
+        return new ResponseEntity<>(contactService.getContactById(id),HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ContactResponseDTO> deleteContactById(@PathVariable Long id) {
+        return new ResponseEntity<>(contactService.deleteContactById(id),HttpStatus.OK);
+    }
+
 }

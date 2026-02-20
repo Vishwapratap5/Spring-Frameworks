@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor
-public class AccountService {
+public class AccountServiceImpl {
 
     @Autowired
     private AccountRepository accountRepository;

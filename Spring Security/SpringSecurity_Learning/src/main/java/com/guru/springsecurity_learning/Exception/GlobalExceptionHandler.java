@@ -22,4 +22,16 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(value=ResourceAlreadyExistException.class)
+    public ResponseEntity<ErrorResponse> handleResourceAlreadyExistException(ResourceAlreadyExistException ex, WebRequest webRequest){
+        ErrorResponse errorResponse = new ErrorResponse();
+        errorResponse.setErrorMessage(ex.getMessage());
+        errorResponse.setErrorDetails(webRequest.getDescription(false));
+        errorResponse.setErrorCode(HttpStatus.CONFLICT);
+        errorResponse.setTimestamp(LocalDateTime.now());
+        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
+    }
+
+
 }
