@@ -1,5 +1,6 @@
 package com.guru.springsecurity_learning.Model;
 
+import com.guru.springsecurity_learning.Enums.TransactionStatus;
 import com.guru.springsecurity_learning.Enums.TransactionType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -27,9 +28,11 @@ public class Transaction {
     @JoinColumn(name = "account_id", nullable = false)
     private Account account;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "customer_id", nullable = false)
-    private Customer customer;
+    @Column(nullable = false)
+    private BigDecimal balanceBefore;
+
+    @Column(nullable = false)
+    private BigDecimal balanceAfter;
 
     @CreationTimestamp
     @Column(nullable = false,updatable = false)
@@ -38,6 +41,14 @@ public class Transaction {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private TransactionType transactionType;
+
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private TransactionStatus transactionStatus;
+
+    @Column(nullable = false, unique = true, updatable = false)
+    private String transactionRef;
 
     @Column(nullable = false)
     @NotNull

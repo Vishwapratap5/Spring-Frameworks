@@ -8,7 +8,7 @@ import jakarta.validation.Valid;
 
 import java.util.Optional;
 
-public interface CustomerService {
+public interface CustomerAuthService {
 
     CustomerResponseDTO localCustomerRegistration(CustomerRegisterRequestDTO customer);
 

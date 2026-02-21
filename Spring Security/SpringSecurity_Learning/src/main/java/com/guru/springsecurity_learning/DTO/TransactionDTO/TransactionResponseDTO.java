@@ -1,21 +1,25 @@
 package com.guru.springsecurity_learning.DTO.TransactionDTO;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import com.guru.springsecurity_learning.Enums.TransactionStatus;
+import com.guru.springsecurity_learning.Enums.TransactionType;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-
-@AllArgsConstructor
-@NoArgsConstructor
 @Data
-@Builder
 public class TransactionResponseDTO {
-    private Long transactionId;
-    private String transactionType;
-    private Long transactionAmount;
+
+    private String transactionRef;
+
+    private TransactionType transactionType;
+
+    private TransactionStatus status;
+
+    private BigDecimal transactionAmount;
+
+    private BigDecimal balanceAfter;
+
     private LocalDateTime transactionDate;
 }

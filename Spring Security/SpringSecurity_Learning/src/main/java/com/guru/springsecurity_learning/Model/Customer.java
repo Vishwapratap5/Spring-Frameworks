@@ -63,10 +63,6 @@ public class Customer {
     private List<Card> cards;
 
 
-    @OneToMany(mappedBy = "customer")
-    @JsonIgnore
-    private List<Transaction> transactions;
-
     @OneToMany
     @JsonIgnore
     private List<Loan> loans;

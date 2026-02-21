@@ -1,6 +1,7 @@
 package com.guru.springsecurity_learning.Model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.guru.springsecurity_learning.Enums.AccountStatus;
 import com.guru.springsecurity_learning.Enums.AccountType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -9,7 +10,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.beans.factory.annotation.Value;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -37,20 +40,27 @@ public class Account {
     @Enumerated(EnumType.STRING)
     private AccountType accountType;
 
-    @NotBlank
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String branchAddress;
+    private AccountStatus status;
+
+    @Column(nullable = false)
+    @Value("${bank.default.branch-code}")
+    private String branchCode;
 
     @Column(updatable = false,nullable = false)
     @CreationTimestamp
     private LocalDateTime createdAt;
 
+    @Column(nullable = false)
+    private BigDecimal balance;
     // Account
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id", nullable = false)
+    @JsonIgnore
     private Customer customer;
 
-    @OneToMany(mappedBy = "account",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "account")
     @JsonIgnore
     private List<Transaction> transactions;
 

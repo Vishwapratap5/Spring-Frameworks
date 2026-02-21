@@ -1,5 +1,7 @@
 package com.guru.springsecurity_learning.DTO.AccountDTOs;
 
+import com.guru.springsecurity_learning.Enums.AccountStatus;
+import com.guru.springsecurity_learning.Enums.AccountType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,11 +15,13 @@ import java.time.LocalDateTime;
 @Builder
 public class AccountResponseDTO {
 
-    private Long accountNumber;
+    private String accountNumber;
 
-    private String accountType;
+    private AccountType accountType;
 
-    private String branchAddress;
+    private AccountStatus accountStatus;
+
+    private String branchCode;
 
     private Long customerId;   // reference, not object
 

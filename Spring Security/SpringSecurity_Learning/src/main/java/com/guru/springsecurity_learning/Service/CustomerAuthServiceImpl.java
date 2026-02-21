@@ -27,7 +27,7 @@ import java.util.Optional;
 @Service
 @AllArgsConstructor
 
-public class CustomerServiceImpl implements CustomerService {
+public class CustomerAuthServiceImpl implements CustomerAuthService {
 
     @Autowired
     private CustomerRepository customerRepository;
