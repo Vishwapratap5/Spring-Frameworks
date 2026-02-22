@@ -58,11 +58,6 @@ public class Customer {
     private LocalDateTime createdAt;
 
 
-    @OneToMany(mappedBy = "customer")
-    @JsonIgnore
-    private List<Card> cards;
-
-
     @OneToMany
     @JsonIgnore
     private List<Loan> loans;

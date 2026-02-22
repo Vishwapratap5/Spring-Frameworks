@@ -64,5 +64,9 @@ public class Account {
     @JsonIgnore
     private List<Transaction> transactions;
 
+    @OneToMany(mappedBy = "account")
+    @JsonIgnore
+    private List<Card> cards;
+
 
 }

@@ -55,3 +55,16 @@ public class Transaction {
     private BigDecimal transactionAmount;
 
 }
+
+// NOTE:
+// This Transaction entity represents a ledger entry for a *single account*.
+// It intentionally does NOT store counterparty information.
+//
+// Reason:
+// - Not all transactions have an internal counterparty (e.g. cash deposit,
+//   withdrawal, interest credit, fees).
+// - Real banking systems separate immutable ledger records from business context.
+// - Counterparty / transfer details are modeled separately (e.g. via a Transfer
+//   or TransactionMetadata entity) when needed.
+//
+// This keeps the ledger clean, auditable, and extensible.

@@ -33,5 +33,34 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
     }
 
+    @ExceptionHandler(value=InvalidOperationException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidOperationException(Exception ex, WebRequest webRequest){
+        ErrorResponse errorResponse = new ErrorResponse();
+        errorResponse.setErrorMessage(ex.getMessage());
+        errorResponse.setErrorDetails(webRequest.getDescription(false));
+        errorResponse.setErrorCode(HttpStatus.CONFLICT);
+        errorResponse.setTimestamp(LocalDateTime.now());
+        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(value=InvalidAmountException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidAmountException(Exception ex, WebRequest webRequest){
+        ErrorResponse errorResponse = new ErrorResponse();
+        errorResponse.setErrorMessage(ex.getMessage());
+        errorResponse.setErrorDetails(webRequest.getDescription(false));
+        errorResponse.setErrorCode(HttpStatus.BAD_REQUEST);
+        errorResponse.setTimestamp(LocalDateTime.now());
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = UnauthorizedAccountAccessException.class)
+    public ResponseEntity<ErrorResponse> handleUnauthorizedAccountAccessException(Exception ex, WebRequest webRequest){
+        ErrorResponse errorResponse = new ErrorResponse();
+        errorResponse.setErrorMessage(ex.getMessage());
+        errorResponse.setErrorDetails(webRequest.getDescription(false));
+        errorResponse.setErrorCode(HttpStatus.UNAUTHORIZED);
+        errorResponse.setTimestamp(LocalDateTime.now());
+        return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
+    }
 
 }

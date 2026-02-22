@@ -5,6 +5,7 @@ import com.guru.springsecurity_learning.DAO.CustomerRepository;
 import com.guru.springsecurity_learning.DTO.AccountDTOs.AccountCreationRequestDTO;
 import com.guru.springsecurity_learning.DTO.AccountDTOs.AccountResponseDTO;
 import com.guru.springsecurity_learning.Enums.AccountStatus;
+import com.guru.springsecurity_learning.Exception.InvalidOperationException;
 import com.guru.springsecurity_learning.Model.Account;
 import com.guru.springsecurity_learning.Model.Customer;
 import jakarta.persistence.EntityExistsException;
@@ -12,9 +13,6 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -34,16 +32,19 @@ public class AccountServiceImpl implements AccountService {
     public AccountServiceImpl(
             AccountRepository accountRepository,
             CustomerRepository customerRepository,
-            AccountNumberGenerationService accountNumberGenrationService,
+            AccountNumberGenerationService accountNumberGenerationService,
             @Value("${bank.default.branch-code}") String defaultBranchCode,
             ModelMapper modelMapper, CurrentUserService currentUserService) {
         this.accountRepository = accountRepository;
         this.customerRepository = customerRepository;
-        this.accountNumberGenerationService = accountNumberGenrationService;
+        this.accountNumberGenerationService = accountNumberGenerationService;
         this.defaultBranchCode = defaultBranchCode;
         this.modelMapper = modelMapper;
         this.currentUserService = currentUserService;
     }
+
+
+
 
     @Override
     @Transactional
@@ -73,13 +74,13 @@ public class AccountServiceImpl implements AccountService {
     @Override
     @Transactional
     public void freezeAccount(Long accountId) {
-        Account account=accountRepository.findById(accountId).orElseThrow(() -> new IllegalStateException("Account not found"));
+        Account account=accountRepository.findById(accountId).orElseThrow(() -> new EntityNotFoundException("Account not found"));
 
         if(account.getStatus().equals(AccountStatus.FROZEN)){
-            throw new IllegalStateException("Account is already FROZEN");
+            throw new InvalidOperationException("Account is already FROZEN");
         }
         if(account.getStatus().equals(AccountStatus.CLOSED)){
-            throw new IllegalStateException("Account is already CLOSED");
+            throw new InvalidOperationException("Account is already CLOSED");
         }
         account.setStatus(AccountStatus.FROZEN);
         accountRepository.save(account);
@@ -89,13 +90,13 @@ public class AccountServiceImpl implements AccountService {
     @Override
     @Transactional
     public void unfreezeAccount(Long accountId) {
-        Account account=accountRepository.findById(accountId).orElseThrow(() -> new IllegalStateException("Account not found"));
+        Account account=accountRepository.findById(accountId).orElseThrow(() -> new EntityNotFoundException("Account not found"));
 
         if(account.getStatus().equals(AccountStatus.ACTIVE)){
-            throw new IllegalStateException("Account is already Active");
+            throw new InvalidOperationException("Account is already Active");
         }
         if(account.getStatus().equals(AccountStatus.CLOSED)){
-            throw new IllegalStateException("Account is already CLOSED");
+            throw new InvalidOperationException("Account is already CLOSED");
         }
         account.setStatus(AccountStatus.ACTIVE);
         accountRepository.save(account);
@@ -105,14 +106,14 @@ public class AccountServiceImpl implements AccountService {
     @Override
     @Transactional
     public void closeAccount(Long accountId) {
-        Account account=accountRepository.findById(accountId).orElseThrow(() -> new IllegalStateException("Account not found"));
+        Account account=accountRepository.findById(accountId).orElseThrow(() -> new EntityNotFoundException("Account not found"));
 
         if(account.getStatus().equals(AccountStatus.CLOSED)){
-            throw new IllegalStateException("Account is already CLOSED");
+            throw new InvalidOperationException("Account is already CLOSED");
         }
 
         if (account.getBalance().compareTo(BigDecimal.ZERO) != 0) {
-            throw new IllegalStateException("Account balance must be zero to close");
+            throw new InvalidOperationException("Account balance must be zero to close");
         }
 
         account.setStatus(AccountStatus.CLOSED);

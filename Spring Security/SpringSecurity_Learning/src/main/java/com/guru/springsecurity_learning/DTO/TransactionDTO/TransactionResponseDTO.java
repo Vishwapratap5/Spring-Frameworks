@@ -15,7 +15,7 @@ public class TransactionResponseDTO {
 
     private TransactionType transactionType;
 
-    private TransactionStatus status;
+    private TransactionStatus transactionStatus;
 
     private BigDecimal transactionAmount;
 

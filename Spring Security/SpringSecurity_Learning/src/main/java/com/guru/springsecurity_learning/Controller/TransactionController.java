@@ -6,11 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -24,4 +22,29 @@ public class TransactionController {
     public ResponseEntity<List<TransactionResponseDTO>> getTransactions(@PathVariable Long accountId) {
         return new ResponseEntity<>(transactionService.getAllTransactions(accountId), HttpStatus.OK);
     }
+
+    @PostMapping("/{accountId}/debit")
+    public ResponseEntity<TransactionResponseDTO> debit(
+            @PathVariable Long accountId,
+            @RequestParam BigDecimal amount,
+            @RequestHeader("Idempotency-Key") String transactionRef
+    ) {
+        return ResponseEntity.ok(
+                transactionService.debit(accountId, amount, transactionRef)
+        );
+    }
+
+    @PostMapping("/{accountId}/credit")
+    @PreAuthorize("hasAnyRole('USER','ADMIN','MANAGER')")
+    public ResponseEntity<TransactionResponseDTO> credit(@PathVariable("accountId") Long accountId, @RequestParam("amount") BigDecimal amount,@RequestHeader("Idempotency-Key") String transactionRef) {
+        return new ResponseEntity<>(transactionService.credit(accountId,amount,transactionRef), HttpStatus.OK);
+    }
+
+    @GetMapping("/transactions/{transactionRef}")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<TransactionResponseDTO> getByTransactionRef(@PathVariable String transactionRef) {
+        return ResponseEntity.ok(transactionService.getByTransactionRef(transactionRef));
+    }
+
+
 }

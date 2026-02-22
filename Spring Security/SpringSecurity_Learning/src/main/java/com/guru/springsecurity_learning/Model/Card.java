@@ -1,13 +1,16 @@
 package com.guru.springsecurity_learning.Model;
 
 
+import com.guru.springsecurity_learning.Enums.CardStatus;
 import com.guru.springsecurity_learning.Enums.CardType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -20,9 +23,9 @@ public class Card {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long cardId;
 
-    @ManyToOne
-    @JoinColumn(name = "customer_id",nullable = false)
-    private Customer customer;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "account_id",nullable = false)
+    private Account account;
 
     @Column(name = "card_number",unique = true,nullable = false)
     private String cardNumber;
@@ -31,16 +34,19 @@ public class Card {
     @Enumerated(EnumType.STRING)
     private CardType cardType;
 
-    @Column(name = "total_limit")
-    private BigDecimal totalLimit;
+    @Column(name = "card_limit")
+    private BigDecimal cardLimit;
 
-    @Column(name = "amount_used")
-    private BigDecimal amountUsed;
 
-    @Column(name = "available_amount")
-    private BigDecimal availableAmount;
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private CardStatus cardStatus;
 
-    @Column(name = "create_dt")
-    private LocalDateTime createDt;
+    @Column(name = "create_dt",nullable = false)
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+
+    @Column(nullable = false)
+    private LocalDate expiryDate;
 
 }

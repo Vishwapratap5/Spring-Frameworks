@@ -6,6 +6,7 @@ import com.guru.springsecurity_learning.DAO.CustomerRepository;
 import com.guru.springsecurity_learning.DAO.RoleAuditRepository;
 import com.guru.springsecurity_learning.Enums.AuditAction;
 import com.guru.springsecurity_learning.Enums.Role;
+import com.guru.springsecurity_learning.Exception.InvalidOperationException;
 import com.guru.springsecurity_learning.Model.Authority;
 import com.guru.springsecurity_learning.Model.Customer;
 import com.guru.springsecurity_learning.Model.RoleAudit;
@@ -74,7 +75,7 @@ public class SuperAdminPanelImpl implements SuperAdminPanelService {
         boolean hasRole = authorityRepository.existsByCustomerAndRole(foundCustomer, role);
 
         if (!hasRole) {
-            throw new IllegalStateException(
+            throw new EntityNotFoundException(
                     "Customer does not have role " + role
             );
         }
@@ -82,7 +83,7 @@ public class SuperAdminPanelImpl implements SuperAdminPanelService {
         Long currentUserId = getCurrentAuthenticatedCustomer();
         if (currentUserId.equals(customerId)
                 && role == Role.ROLE_SUPER_ADMIN) {
-            throw new IllegalStateException(
+            throw new InvalidOperationException(
                     "SUPER_ADMIN cannot remove own role"
             );
         }
@@ -92,7 +93,7 @@ public class SuperAdminPanelImpl implements SuperAdminPanelService {
                     authorityRepository.countByRole(Role.ROLE_SUPER_ADMIN);
 
             if (count <= 1) {
-                throw new IllegalStateException(
+                throw new InvalidOperationException(
                         "Cannot remove the last SUPER_ADMIN"
                 );
             }
@@ -116,7 +117,7 @@ public class SuperAdminPanelImpl implements SuperAdminPanelService {
                 SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication == null || !authentication.isAuthenticated()) {
-            throw new IllegalStateException("No authenticated user found");
+            throw new EntityNotFoundException("No authenticated user found");
         }
 
         Customer customer= customerRepository.findByEmail(authentication.getName())

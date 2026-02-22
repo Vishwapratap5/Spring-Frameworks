@@ -1,6 +1,7 @@
 package com.guru.springsecurity_learning.Service;
 
 import com.guru.springsecurity_learning.DAO.CustomerRepository;
+import com.guru.springsecurity_learning.Exception.UnauthorizedAccountAccessException;
 import com.guru.springsecurity_learning.Model.Customer;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.security.core.Authentication;
@@ -21,7 +22,7 @@ public class CurrentUserService {
                 SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication == null || !authentication.isAuthenticated()) {
-            throw new IllegalStateException("No authenticated user");
+            throw new UnauthorizedAccountAccessException("No authenticated user");
         }
 
         return customerRepository.findByEmail(authentication.getName())
