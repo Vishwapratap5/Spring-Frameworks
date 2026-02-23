@@ -4,6 +4,7 @@ import com.guru.springsecurity_learning.DAO.AccountRepository;
 import com.guru.springsecurity_learning.DAO.CardRepository;
 import com.guru.springsecurity_learning.DTO.CardDTO.CardCreationRequestDTO;
 import com.guru.springsecurity_learning.DTO.CardDTO.CardResponseDTO;
+import com.guru.springsecurity_learning.DTO.TransactionDTO.TransactionResponseDTO;
 import com.guru.springsecurity_learning.Enums.AccountStatus;
 import com.guru.springsecurity_learning.Enums.CardStatus;
 import com.guru.springsecurity_learning.Enums.CardType;
@@ -38,7 +39,8 @@ public class CardServiceImpl implements CardService {
 
     @Autowired
     private CardNumberGenerationService cardNumberGenerationService;
-
+    @Autowired
+    private AccountService accountService;
 
 
     @Override

@@ -2,6 +2,7 @@ package com.guru.springsecurity_learning.Controller;
 
 import com.guru.springsecurity_learning.DTO.TransactionDTO.TransactionResponseDTO;
 import com.guru.springsecurity_learning.Service.TransactionService;
+import com.guru.springsecurity_learning.Service.TransferTransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,9 @@ import java.util.List;
 public class TransactionController {
     @Autowired
     private TransactionService transactionService;
+
+    @Autowired
+    private TransferTransactionService transferService;
 
     @GetMapping("/{accountId}/transactions")
     public ResponseEntity<List<TransactionResponseDTO>> getTransactions(@PathVariable Long accountId) {
@@ -41,9 +45,19 @@ public class TransactionController {
     }
 
     @GetMapping("/transactions/{transactionRef}")
-    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<TransactionResponseDTO> getByTransactionRef(@PathVariable String transactionRef) {
         return ResponseEntity.ok(transactionService.getByTransactionRef(transactionRef));
+    }
+
+    @PostMapping("/transfer")
+    public ResponseEntity<Void> transfer(
+            @RequestParam Long fromAccountId,
+            @RequestParam Long toAccountId,
+            @RequestParam BigDecimal amount,
+            @RequestHeader("X-Idempotency-Key") String key
+    ) {
+        transferService.transfer(fromAccountId, toAccountId, amount, key);
+        return ResponseEntity.ok().build();
     }
 
 

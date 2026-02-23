@@ -14,4 +14,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     List<Transaction> findByAccount_IdOrderByTransactionDateDesc(Long accountId);
 
     Optional<Transaction> findByTransactionRef(String transactionRef);
+
+    boolean existsByTransactionRef(String transactionRef);
 }

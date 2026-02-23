@@ -1,14 +1,17 @@
 package com.guru.springsecurity_learning.Service;
 
 import com.guru.springsecurity_learning.DAO.AccountRepository;
+import com.guru.springsecurity_learning.DAO.CardRepository;
 import com.guru.springsecurity_learning.DAO.TransactionRepository;
 import com.guru.springsecurity_learning.DTO.TransactionDTO.TransactionResponseDTO;
 import com.guru.springsecurity_learning.Enums.AccountStatus;
+import com.guru.springsecurity_learning.Enums.CardStatus;
 import com.guru.springsecurity_learning.Enums.TransactionStatus;
 import com.guru.springsecurity_learning.Enums.TransactionType;
 import com.guru.springsecurity_learning.Exception.InvalidAmountException;
 import com.guru.springsecurity_learning.Exception.InvalidOperationException;
 import com.guru.springsecurity_learning.Model.Account;
+import com.guru.springsecurity_learning.Model.Card;
 import com.guru.springsecurity_learning.Model.Customer;
 import com.guru.springsecurity_learning.Model.Transaction;
 import jakarta.persistence.EntityNotFoundException;
@@ -37,7 +40,8 @@ public class TransactionServiceImpl implements TransactionService {
     @Autowired
     private CurrentUserService currentUserService;
 
-
+    @Autowired
+    private CardRepository cardRepository;
 
 
     @Override
@@ -161,4 +165,5 @@ public class TransactionServiceImpl implements TransactionService {
 
         return modelMapper.map(txn,TransactionResponseDTO.class);
     }
+
 }

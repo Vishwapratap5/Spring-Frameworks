@@ -14,4 +14,5 @@ public interface TransactionService {
     TransactionResponseDTO credit(Long accountId, BigDecimal amount,String transactionRef) ;
 
     TransactionResponseDTO getByTransactionRef(String transactionRef);
+
 }

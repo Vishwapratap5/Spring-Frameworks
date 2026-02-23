@@ -18,7 +18,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/super-admin/panel/audit-details")
-@PreAuthorize("hasRole('SUPER_ADMIN')")
+@PreAuthorize("hasAnyRole('SUPER_ADMIN','AUDITOR')")
 public class RoleAuditController {
     @Autowired
     private RoleAuditService roleAuditService;

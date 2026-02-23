@@ -24,6 +24,6 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     Optional<Account> findByIdAndCustomer(Long id, Customer customer);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
-
     Optional<Account> findByIdAndCustomerForUpdate(Long accountId, Customer currentCustomer);
+
 }
