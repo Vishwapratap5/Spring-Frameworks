@@ -41,14 +41,14 @@ public class TransferTransactionServiceImpl
             throw new IllegalArgumentException("Amount must be > 0");
         }
 
-        // 🔁 Idempotency FIRST
+        //Idempotency FIRST
         if (transactionRepository.existsByTransactionRef(transactionRef)) {
             return; // already processed
         }
 
         Customer currentCustomer = currentUserService.getCurrentCustomer();
 
-        // 🔒 Lock order matters (avoid deadlocks)
+        // Lock order (To avoid deadlocks)
         Long firstLock = Math.min(fromAccountId, toAccountId);
         Long secondLock = Math.max(fromAccountId, toAccountId);
 
@@ -64,31 +64,31 @@ public class TransferTransactionServiceImpl
         Account toAccount =
                 toAccountId.equals(first.getId()) ? first : second;
 
-        // 🔐 Ownership check
+        // Ownership check
         if (!fromAccount.getCustomer().getCustomerId()
                 .equals(currentCustomer.getCustomerId())) {
             throw new SecurityException("Unauthorized transfer");
         }
 
-        // 🔐 Status checks
+        // Status checks
         if (fromAccount.getStatus() != AccountStatus.ACTIVE ||
                 toAccount.getStatus() != AccountStatus.ACTIVE) {
             throw new IllegalStateException("Account not active");
         }
 
-        // 💰 Balance check
+        // Balance check
         if (fromAccount.getBalance().compareTo(amount) < 0) {
             throw new IllegalStateException("Insufficient balance");
         }
 
-        // 💥 Perform transfer
+        // Perform transfer
         BigDecimal fromBefore = fromAccount.getBalance();
         BigDecimal toBefore   = toAccount.getBalance();
 
         fromAccount.setBalance(fromBefore.subtract(amount));
         toAccount.setBalance(toBefore.add(amount));
 
-        // 🧾 Ledger entries
+        // Ledger entries
         Transaction debitTxn = Transaction.builder()
                 .account(fromAccount)
                 .transactionType(TransactionType.TRANSFER_DEBIT)
