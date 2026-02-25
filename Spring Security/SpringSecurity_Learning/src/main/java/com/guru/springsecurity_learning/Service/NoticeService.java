@@ -2,12 +2,13 @@ package com.guru.springsecurity_learning.Service;
 
 import com.guru.springsecurity_learning.DTO.ContactDTOs.ContactResponseDTO;
 import com.guru.springsecurity_learning.DTO.NoticeDTOs.NoticeCreateRequestDTO;
+import com.guru.springsecurity_learning.DTO.NoticeDTOs.NoticeListResponseDTO;
 import com.guru.springsecurity_learning.DTO.NoticeDTOs.NoticeResponseDTO;
 
 import java.util.List;
 
 public interface NoticeService {
-    List<NoticeResponseDTO> getAllNotices();
+    NoticeListResponseDTO getAllNotices(int page, int size, String sortBy, String direction);
 
     NoticeResponseDTO getNoticeById(Long id);
 

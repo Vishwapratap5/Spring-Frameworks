@@ -3,16 +3,16 @@ package com.guru.springsecurity_learning.DAO;
 import com.guru.springsecurity_learning.Enums.AuditAction;
 import com.guru.springsecurity_learning.Enums.Role;
 import com.guru.springsecurity_learning.Model.RoleAudit;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
-
 public interface RoleAuditRepository extends JpaRepository<RoleAudit, Long> {
-    List<RoleAudit> findByTargetCustomerId(long targetId);
+    Page<RoleAudit> findByTargetCustomerId(long targetId, Pageable pageable);
 
-    List<RoleAudit> findByPerformedByCustomerId(long actorId);
+    Page<RoleAudit> findByPerformedByCustomerId(long actorId, Pageable pageable);
 
-    List<RoleAudit> findByRole(Role role);
+    Page<RoleAudit> findByRole(Role role, Pageable pageable);
 
-    List<RoleAudit> findByAction(AuditAction action);
+    Page<RoleAudit> findByAction(AuditAction action, Pageable pageable);
 }

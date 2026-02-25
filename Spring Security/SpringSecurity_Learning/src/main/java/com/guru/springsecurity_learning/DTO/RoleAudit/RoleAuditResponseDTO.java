@@ -1,4 +1,4 @@
-package com.guru.springsecurity_learning.DTO;
+package com.guru.springsecurity_learning.DTO.RoleAudit;
 
 import com.guru.springsecurity_learning.Enums.AuditAction;
 import com.guru.springsecurity_learning.Enums.Role;

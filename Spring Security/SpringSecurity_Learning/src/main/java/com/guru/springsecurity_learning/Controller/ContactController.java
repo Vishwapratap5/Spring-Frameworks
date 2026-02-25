@@ -1,6 +1,7 @@
 package com.guru.springsecurity_learning.Controller;
 
 import com.guru.springsecurity_learning.DTO.ContactDTOs.AdminCreateContactDTO;
+import com.guru.springsecurity_learning.DTO.ContactDTOs.ContactListResponseDTO;
 import com.guru.springsecurity_learning.DTO.ContactDTOs.ContactResponseDTO;
 import com.guru.springsecurity_learning.Service.ContactServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +21,11 @@ public class ContactController {
     private ContactServiceImpl contactService;
 
     @GetMapping("/all")
-    public ResponseEntity<List<ContactResponseDTO>> getAllContacts() {
-        List<ContactResponseDTO> contacts=contactService.getAllContacts();
+    public ResponseEntity<ContactListResponseDTO> getAllContacts(  @RequestParam(name="page",defaultValue = "0") int page,
+                                                                   @RequestParam(name="size",defaultValue = "10") int size,
+                                                                   @RequestParam(name="sortBy",defaultValue = "createdAt") String sortBy,
+                                                                   @RequestParam(name="direction",defaultValue = "desc") String direction) {
+        ContactListResponseDTO contacts=contactService.getAllContacts(page, size, sortBy, direction);
         return new ResponseEntity<>(contacts, HttpStatus.OK);
     }
 
@@ -30,9 +34,5 @@ public class ContactController {
         return new ResponseEntity<>(contactService.getContactById(id),HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ContactResponseDTO> deleteContactById(@PathVariable Long id) {
-        return new ResponseEntity<>(contactService.deleteContactById(id),HttpStatus.OK);
-    }
 
 }

@@ -1,7 +1,8 @@
 package com.guru.springsecurity_learning.Service;
 
 import com.guru.springsecurity_learning.DAO.RoleAuditRepository;
-import com.guru.springsecurity_learning.DTO.RoleAuditResponseDTO;
+import com.guru.springsecurity_learning.DTO.RoleAudit.RoleAuditListResponse;
+import com.guru.springsecurity_learning.DTO.RoleAudit.RoleAuditResponseDTO;
 import com.guru.springsecurity_learning.Enums.AuditAction;
 import com.guru.springsecurity_learning.Enums.Role;
 import com.guru.springsecurity_learning.Model.RoleAudit;
@@ -9,6 +10,10 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,33 +30,96 @@ public class RoleAuditServiceImpl implements RoleAuditService {
     private ModelMapper modelMapper;
 
     @Override
-    public List<RoleAuditResponseDTO> findAll() {
-       List<RoleAudit> roleAudits = roleAuditRepository.findAll();
-       return roleAudits.stream().map(roleAudit -> modelMapper.map(roleAudit, RoleAuditResponseDTO.class)).collect(Collectors.toList());
+    public RoleAuditListResponse findAll(int page, int size, String sortBy, String direction) {
+
+        Sort sort = direction.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+       Page<RoleAudit> roleAudits = roleAuditRepository.findAll(pageable);
+
+       List<RoleAuditResponseDTO> roleAuditDTOs=roleAudits.getContent().stream().map(roleAudit->modelMapper.map(roleAudit,RoleAuditResponseDTO.class)).toList();
+
+       RoleAuditListResponse roleAuditListResponse=new RoleAuditListResponse();
+       roleAuditListResponse.setRoleAuditDTOs(roleAuditDTOs);
+       roleAuditListResponse.setTotalElements(roleAudits.getTotalElements());
+       roleAuditListResponse.setTotalPages(roleAudits.getTotalPages());
+       roleAuditListResponse.setPageNumber(roleAudits.getNumber());
+       roleAuditListResponse.setPageSize(roleAudits.getSize());
+       roleAuditListResponse.setLast(roleAudits.isLast());
+       return roleAuditListResponse;
+
+
     }
 
     @Override
-    public List<RoleAuditResponseDTO> findByTarget(long targetId) {
-        List<RoleAudit> roleAudits=roleAuditRepository.findByTargetCustomerId(targetId);
+    public RoleAuditListResponse findByTarget(int page, int size, String sortBy, String direction,long targetId) {
+        Sort sort = direction.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<RoleAudit> roleAudits=roleAuditRepository.findByTargetCustomerId(targetId,pageable);
         return roleAudits.stream().map(roleAudit -> modelMapper.map(roleAudit, RoleAuditResponseDTO.class)).collect(Collectors.toList());
     }
 
     @Override
-    public List<RoleAuditResponseDTO> findByActor(long actorId) {
-        List<RoleAudit> roleAudits=roleAuditRepository.findByPerformedByCustomerId(actorId);
-        return roleAudits.stream().map(roleAudit -> modelMapper.map(roleAudit, RoleAuditResponseDTO.class)).collect(Collectors.toList());
+    public RoleAuditListResponse findByActor(int page, int size, String sortBy, String direction,long actorId) {
+        Sort sort = direction.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<RoleAudit> roleAudits=roleAuditRepository.findByPerformedByCustomerId(actorId,pageable);
+       List<RoleAuditResponseDTO> roleAuditsResponse=roleAudits.getContent().stream().map(roleAudit->modelMapper.map(roleAudit,RoleAuditResponseDTO.class)).toList();
+       RoleAuditListResponse roleAuditListResponse=new RoleAuditListResponse();
+       roleAuditListResponse.setRoleAuditDTOs(roleAuditsResponse);
+       roleAuditListResponse.setTotalElements(roleAudits.getTotalElements());
+       roleAuditListResponse.setTotalPages(roleAudits.getTotalPages());
+       roleAuditListResponse.setPageNumber(roleAudits.getNumber());
+       roleAuditListResponse.setPageSize(roleAudits.getSize());
+       roleAuditListResponse.setLast(roleAudits.isLast());
+       return roleAuditListResponse;
     }
 
     @Override
-    public List<RoleAuditResponseDTO> findByRole(Role role) {
-        List<RoleAudit> roleAudits=roleAuditRepository.findByRole(role);
-        return roleAudits.stream().map(roleAudit -> modelMapper.map(roleAudit, RoleAuditResponseDTO.class)).collect(Collectors.toList());
+    public RoleAuditListResponse findByRole(int page, int size, String sortBy, String direction,Role role) {
+        Sort sort = direction.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<RoleAudit> roleAudits=roleAuditRepository.findByRole(role,pageable);
+       List<RoleAuditResponseDTO> roleAuditDTOs=roleAudits.getContent().stream().map(roleAudit->modelMapper.map(roleAudit,RoleAuditResponseDTO.class)).toList();
+       RoleAuditListResponse roleAuditListResponse=new RoleAuditListResponse();
+       roleAuditListResponse.setRoleAuditDTOs(roleAuditDTOs);
+       roleAuditListResponse.setTotalElements(roleAudits.getTotalElements());
+       roleAuditListResponse.setTotalPages(roleAudits.getTotalPages());
+       roleAuditListResponse.setPageNumber(roleAudits.getNumber());
+       roleAuditListResponse.setPageSize(roleAudits.getSize());
+       roleAuditListResponse.setLast(roleAudits.isLast());
+       return roleAuditListResponse;
     }
 
     @Override
-    public List<RoleAuditResponseDTO> findByAction(AuditAction action) {
-        List<RoleAudit> roleAudits=roleAuditRepository.findByAction(action);
-        return roleAudits.stream().map(roleAudit -> modelMapper.map(roleAudit, RoleAuditResponseDTO.class)).collect(Collectors.toList());
+    public RoleAuditListResponse findByAction(int page, int size, String sortBy, String direction,AuditAction action) {
+
+        Sort sort = direction.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<RoleAudit> roleAudits=roleAuditRepository.findByAction(action,pageable);
+       List<RoleAuditResponseDTO> roleAuditDTOs=roleAudits.getContent().stream().map(a->modelMapper.map(a,RoleAuditResponseDTO.class)).toList();
+       RoleAuditListResponse roleAuditListResponse=new RoleAuditListResponse();
+       roleAuditListResponse.setRoleAuditDTOs(roleAuditDTOs);
+       roleAuditListResponse.setTotalElements(roleAudits.getTotalElements());
+       roleAuditListResponse.setTotalPages(roleAudits.getTotalPages());
+       roleAuditListResponse.setPageNumber(roleAudits.getNumber());
+       roleAuditListResponse.setPageSize(roleAudits.getSize());
+       roleAuditListResponse.setLast(roleAudits.isLast());
+       return roleAuditListResponse;
     }
 
 }

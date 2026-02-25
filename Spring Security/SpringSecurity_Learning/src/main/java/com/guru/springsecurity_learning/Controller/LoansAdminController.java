@@ -1,6 +1,7 @@
 package com.guru.springsecurity_learning.Controller;
 
 import com.guru.springsecurity_learning.DTO.LoanDTOs.LoanCreationRequestDTO;
+import com.guru.springsecurity_learning.DTO.LoanDTOs.LoanListResponseDTO;
 import com.guru.springsecurity_learning.DTO.LoanDTOs.LoanResponseDTO;
 import com.guru.springsecurity_learning.Service.LoanService;
 import jakarta.validation.Valid;
@@ -41,11 +42,15 @@ public class LoansAdminController {
     }
 
     @GetMapping("/customer/{customerId}")
-    public ResponseEntity<List<LoanResponseDTO>> getLoansByCustomer(
+    public ResponseEntity<LoanListResponseDTO> getLoansByCustomer(
+            @RequestParam(name="page",defaultValue = "0") int page,
+            @RequestParam(name="size",defaultValue = "10") int size,
+            @RequestParam(name="sortBy",defaultValue = "createdAt") String sortBy,
+            @RequestParam(name="direction",defaultValue = "desc") String direction,
             @PathVariable Long customerId) {
 
         return ResponseEntity.ok(
-                loanService.getLoansByCustomer(customerId)
+                loanService.getLoansByCustomer(page, size, sortBy, direction,customerId)
         );
     }
 }

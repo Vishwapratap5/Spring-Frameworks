@@ -1,6 +1,7 @@
 package com.guru.springsecurity_learning.Controller;
 
 import com.guru.springsecurity_learning.DTO.ContactDTOs.ContactResponseDTO;
+import com.guru.springsecurity_learning.DTO.NoticeDTOs.NoticeListResponseDTO;
 import com.guru.springsecurity_learning.DTO.NoticeDTOs.NoticeResponseDTO;
 import com.guru.springsecurity_learning.Service.ContactServiceImpl;
 import com.guru.springsecurity_learning.Service.NoticeService;
@@ -21,8 +22,11 @@ public class NoticesController {
     private NoticeService noticeService;
 
     @GetMapping("/all")
-    public ResponseEntity< List<NoticeResponseDTO>>getAllNotices(){
-        List<NoticeResponseDTO> notices=noticeService.getAllNotices();
+    public ResponseEntity<NoticeListResponseDTO> getAllNotices(  @RequestParam(name="page",defaultValue = "0") int page,
+                                                                 @RequestParam(name="size",defaultValue = "10") int size,
+                                                                 @RequestParam(name="sortBy",defaultValue = "createdAt") String sortBy,
+                                                                 @RequestParam(name="direction",defaultValue = "desc") String direction){
+        List<NoticeResponseDTO> notices=noticeService.getAllNotices(page, size, sortBy, direction);
         return new ResponseEntity<>(notices, HttpStatus.OK);
     }
 

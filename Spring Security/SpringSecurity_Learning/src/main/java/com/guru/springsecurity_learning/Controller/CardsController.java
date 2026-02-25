@@ -1,5 +1,6 @@
 package com.guru.springsecurity_learning.Controller;
 
+import com.guru.springsecurity_learning.DTO.CardDTO.CardListResponseDTO;
 import com.guru.springsecurity_learning.DTO.CardDTO.CardResponseDTO;
 import com.guru.springsecurity_learning.DTO.TransactionDTO.TransactionResponseDTO;
 import com.guru.springsecurity_learning.Service.CardService;
@@ -20,9 +21,12 @@ public class CardsController {
     private CardService cardService;
 
     @GetMapping("/details")
-    public ResponseEntity<List<CardResponseDTO>> getCards() {
+    public ResponseEntity<CardListResponseDTO> getCards(@RequestParam(name="page",defaultValue = "0") int page,
+                                                         @RequestParam(name="size",defaultValue = "10") int size,
+                                                         @RequestParam(name="sortBy",defaultValue = "createdAt") String sortBy,
+                                                         @RequestParam(name="direction",defaultValue = "desc") String direction) {
 
-        return new  ResponseEntity<>(cardService.getCards(), HttpStatus.OK);
+        return new  ResponseEntity<>(cardService.getCards(page, size, sortBy, direction), HttpStatus.OK);
     }
 
 

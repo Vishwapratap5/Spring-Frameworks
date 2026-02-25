@@ -1,5 +1,6 @@
 package com.guru.springsecurity_learning.Controller;
 
+import com.guru.springsecurity_learning.DTO.TransactionDTO.TransactionListResponseDTO;
 import com.guru.springsecurity_learning.DTO.TransactionDTO.TransactionResponseDTO;
 import com.guru.springsecurity_learning.Service.TransactionService;
 import com.guru.springsecurity_learning.Service.TransferTransactionService;
@@ -23,8 +24,12 @@ public class TransactionController {
     private TransferTransactionService transferService;
 
     @GetMapping("/{accountId}/transactions")
-    public ResponseEntity<List<TransactionResponseDTO>> getTransactions(@PathVariable Long accountId) {
-        return new ResponseEntity<>(transactionService.getAllTransactions(accountId), HttpStatus.OK);
+    public ResponseEntity<TransactionListResponseDTO> getTransactions(  @RequestParam(name="page",defaultValue = "0") int page,
+                                                                        @RequestParam(name="size",defaultValue = "10") int size,
+                                                                        @RequestParam(name="sortBy",defaultValue = "createdAt") String sortBy,
+                                                                        @RequestParam(name="direction",defaultValue = "desc") String direction,
+                                                                        @PathVariable Long accountId) {
+        return new ResponseEntity<>(transactionService.getAllTransactions(page, size, sortBy, direction,accountId), HttpStatus.OK);
     }
 
     @PostMapping("/{accountId}/debit")

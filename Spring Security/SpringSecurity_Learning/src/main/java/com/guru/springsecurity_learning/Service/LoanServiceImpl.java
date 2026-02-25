@@ -4,6 +4,7 @@ import com.guru.springsecurity_learning.DAO.AccountRepository;
 import com.guru.springsecurity_learning.DAO.CustomerRepository;
 import com.guru.springsecurity_learning.DAO.LoanRepository;
 import com.guru.springsecurity_learning.DTO.LoanDTOs.LoanCreationRequestDTO;
+import com.guru.springsecurity_learning.DTO.LoanDTOs.LoanListResponseDTO;
 import com.guru.springsecurity_learning.DTO.LoanDTOs.LoanResponseDTO;
 import com.guru.springsecurity_learning.Enums.AccountStatus;
 import com.guru.springsecurity_learning.Enums.LoanStatus;
@@ -14,6 +15,10 @@ import com.guru.springsecurity_learning.Model.Loan;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -130,25 +135,41 @@ public class LoanServiceImpl implements LoanService {
     }
 
     @Override
-    public List<LoanResponseDTO> getLoansByCustomer(Long customerId) {
-        List<Loan> loans=loanRepository.findByCustomerId(customerId);
+    public LoanListResponseDTO getLoansByCustomer(int page, int size, String sortBy, String direction,Long customerId) {
 
-        if(loans.isEmpty()){
-            return   new ArrayList<>();
-        }
+        Sort sort = direction.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
 
-        return loans.stream().map(loan -> mapToResponseDTO(loan)).collect(Collectors.toList());
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        Page<Loan> loans=loanRepository.findByCustomerId(customerId,pageable);
+
+       List<LoanResponseDTO> loansResponseDTO=loans.getContent().stream().map(this::mapToResponseDTO).toList();
+
+       LoanListResponseDTO loanListResponseDTO=new LoanListResponseDTO();
+       loanListResponseDTO.setEmis(loansResponseDTO);
+       loanListResponseDTO.setPageNumber(page);
+       loanListResponseDTO.setPageSize(size);
+       loanListResponseDTO.setTotalPages(loans.getTotalPages());
+       loanListResponseDTO.setTotalElements(loans.getTotalElements());
+       loanListResponseDTO.setLast(loans.isLast());
+       return loanListResponseDTO;
     }
 
     @Override
-    public List<LoanResponseDTO> myLoans() {
+    public LoanListResponseDTO myLoans(int page, int size, String sortBy, String direction) {
         Customer curreCustomer=currentUserService.getCurrentCustomer();
-        List<Loan> loans=loanRepository.findByCustomer(curreCustomer);
-
-        if(loans.isEmpty()){
-            return   new ArrayList<>();
-        }
-        return loans.stream().map(loan -> mapToResponseDTO(loan)).collect(Collectors.toList());
+        Page<Loan> loans=loanRepository.findByCustomer(curreCustomer);
+        List<LoanResponseDTO>  loansResponseDTO=loans.getContent().stream().map(this::mapToResponseDTO).toList();
+        LoanListResponseDTO loanListResponseDTO=new LoanListResponseDTO();
+        loanListResponseDTO.setEmis(loansResponseDTO);
+        loanListResponseDTO.setPageNumber(page);
+        loanListResponseDTO.setPageSize(size);
+        loanListResponseDTO.setTotalPages(loans.getTotalPages());
+        loanListResponseDTO.setTotalElements(loans.getTotalElements());
+        loanListResponseDTO.setLast(loans.isLast());
+        return loanListResponseDTO;
     }
 
 

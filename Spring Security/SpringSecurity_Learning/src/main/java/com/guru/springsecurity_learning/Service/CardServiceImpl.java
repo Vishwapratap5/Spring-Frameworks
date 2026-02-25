@@ -3,6 +3,7 @@ package com.guru.springsecurity_learning.Service;
 import com.guru.springsecurity_learning.DAO.AccountRepository;
 import com.guru.springsecurity_learning.DAO.CardRepository;
 import com.guru.springsecurity_learning.DTO.CardDTO.CardCreationRequestDTO;
+import com.guru.springsecurity_learning.DTO.CardDTO.CardListResponseDTO;
 import com.guru.springsecurity_learning.DTO.CardDTO.CardResponseDTO;
 import com.guru.springsecurity_learning.DTO.TransactionDTO.TransactionResponseDTO;
 import com.guru.springsecurity_learning.Enums.AccountStatus;
@@ -18,11 +19,17 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -138,16 +145,27 @@ public class CardServiceImpl implements CardService {
 
 
     @Override
-    public List<CardResponseDTO> getCards() {
+    public CardListResponseDTO getCards(int page, int size, String sortBy, String direction) {
 
         Customer currentCustomer = currentUserService.getCurrentCustomer();
+        Sort sort = direction.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
 
-        List<Card> cards =
-                cardRepository.findByAccount_Customer(currentCustomer);
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<Card> cards =
+                cardRepository.findByAccount_Customer(currentCustomer,pageable);
 
-        return cards.stream()
-                .map(this::mapToResponse)
-                .toList();
+        List<CardResponseDTO> cardResponseDTO=cards.getContent().stream().map(this::mapToResponse).toList();
+
+        CardListResponseDTO cardList= new CardListResponseDTO();
+        cardList.setCards(cardResponseDTO);
+        cardList.setLast(cards.isLast());
+        cardList.setPageNumber(cards.getNumber());
+        cardList.setPageSize(cards.getSize());
+        cardList.setTotalPages(cards.getTotalPages());
+        cardList.setTotalElements(cards.getTotalElements());
+        return cardList;
     }
 
 

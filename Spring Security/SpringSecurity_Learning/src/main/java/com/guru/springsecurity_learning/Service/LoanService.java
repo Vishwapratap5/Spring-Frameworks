@@ -1,6 +1,7 @@
 package com.guru.springsecurity_learning.Service;
 
 import com.guru.springsecurity_learning.DTO.LoanDTOs.LoanCreationRequestDTO;
+import com.guru.springsecurity_learning.DTO.LoanDTOs.LoanListResponseDTO;
 import com.guru.springsecurity_learning.DTO.LoanDTOs.LoanResponseDTO;
 import jakarta.validation.Valid;
 
@@ -15,7 +16,7 @@ public interface LoanService {
 
     LoanResponseDTO closeLoan(@Valid Long loanId);
 
-    List<LoanResponseDTO> getLoansByCustomer(Long customerId);
+    LoanListResponseDTO getLoansByCustomer(int page, int size, String sortBy, String direction, Long customerId);
 
-    List<LoanResponseDTO> myLoans();
+    LoanListResponseDTO myLoans(int page, int size, String sortBy, String direction);
 }

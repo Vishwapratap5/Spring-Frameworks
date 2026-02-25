@@ -1,9 +1,8 @@
 package com.guru.springsecurity_learning.Service;
 
 import com.guru.springsecurity_learning.DTO.AccountDTOs.AccountCreationRequestDTO;
+import com.guru.springsecurity_learning.DTO.AccountDTOs.AccountListResponseDTO;
 import com.guru.springsecurity_learning.DTO.AccountDTOs.AccountResponseDTO;
-
-import java.util.List;
 
 public interface AccountService {
     AccountResponseDTO createAccount(AccountCreationRequestDTO account);
@@ -14,7 +13,9 @@ public interface AccountService {
 
     void closeAccount(Long accountId);
 
-    List<AccountResponseDTO> myAccounts();
+    AccountListResponseDTO myAccounts(int page, int size, String sortBy, String direction);
 
     AccountResponseDTO getAccountById(Long accountId);
+
+    String getBalance(Long accountId);
 }

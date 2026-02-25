@@ -3,6 +3,7 @@ package com.guru.springsecurity_learning.Service;
 import com.guru.springsecurity_learning.DAO.AccountRepository;
 import com.guru.springsecurity_learning.DAO.CardRepository;
 import com.guru.springsecurity_learning.DAO.TransactionRepository;
+import com.guru.springsecurity_learning.DTO.TransactionDTO.TransactionListResponseDTO;
 import com.guru.springsecurity_learning.DTO.TransactionDTO.TransactionResponseDTO;
 import com.guru.springsecurity_learning.Enums.AccountStatus;
 import com.guru.springsecurity_learning.Enums.CardStatus;
@@ -19,11 +20,16 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -45,11 +51,26 @@ public class TransactionServiceImpl implements TransactionService {
 
 
     @Override
-    public List<TransactionResponseDTO> getAllTransactions(Long accountId) {
+    public TransactionListResponseDTO getAllTransactions(int page, int size, String sortBy, String direction, Long accountId) {
+        Sort sort = direction.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+
         Customer currentCustomer =currentUserService.getCurrentCustomer();
         Account account=accountRepository.findByIdAndCustomer(accountId,currentCustomer).orElseThrow(()->new EntityNotFoundException("Account not found"));
-        List<Transaction> transactions=transactionRepository.findByAccount_IdOrderByTransactionDateDesc(account.getId());
-        return transactions.stream().map(transaction->modelMapper.map(transaction,TransactionResponseDTO.class)).toList();
+        Page<Transaction> transactions=transactionRepository.findByAccount_IdOrderByTransactionDateDesc(account.getId(),pageable);
+        List<TransactionResponseDTO> transactionDTOs=transactions.getContent().stream().map(transaction -> modelMapper.map(transaction,TransactionResponseDTO.class)).toList();
+
+        TransactionListResponseDTO transactionListResponseDTO=new TransactionListResponseDTO();
+        transactionListResponseDTO.setTransactionList(transactionDTOs);
+        transactionListResponseDTO.setLast(transactions.isLast());
+        transactionListResponseDTO.setPageSize(transactions.getSize());
+        transactionListResponseDTO.setPageNumber(transactions.getNumber());
+        transactionListResponseDTO.setTotalPages(transactions.getTotalPages());
+        transactionListResponseDTO.setTotalElements(transactions.getTotalElements());
+        return transactionListResponseDTO;
     }
 
 

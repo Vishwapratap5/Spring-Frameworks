@@ -50,8 +50,6 @@ public class Loan {
     @Column(nullable = false)
     private Integer tenureMonths;
 
-    @Column(nullable = false)
-    private BigDecimal emiAmount;
 
     @Column(nullable = false)
     private BigDecimal outstandingAmount;
@@ -59,8 +57,6 @@ public class Loan {
     @Column(nullable = false)
     private LocalDate startDate;
 
-    @Column(nullable = false)
-    private LocalDate endDate;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)

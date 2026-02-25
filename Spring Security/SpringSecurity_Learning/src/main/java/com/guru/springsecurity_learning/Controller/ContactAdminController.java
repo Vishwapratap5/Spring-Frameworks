@@ -29,8 +29,13 @@ public class ContactAdminController {
         return new ResponseEntity<>(contactService.createContact(request), HttpStatus.OK);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{id}/update")
     public ResponseEntity<ContactResponseDTO> updateContact(@Valid @PathVariable Long id,@Valid @RequestBody AdminCreateContactDTO request){
         return new ResponseEntity<>(contactService.updateContact(id,request), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}/delete")
+    public ResponseEntity<ContactResponseDTO> deleteContactById(@PathVariable Long id) {
+        return new ResponseEntity<>(contactService.deleteContactById(id),HttpStatus.OK);
     }
 }

@@ -3,6 +3,7 @@ package com.guru.springsecurity_learning.Service;
 import com.guru.springsecurity_learning.DAO.AccountRepository;
 import com.guru.springsecurity_learning.DAO.CustomerRepository;
 import com.guru.springsecurity_learning.DTO.AccountDTOs.AccountCreationRequestDTO;
+import com.guru.springsecurity_learning.DTO.AccountDTOs.AccountListResponseDTO;
 import com.guru.springsecurity_learning.DTO.AccountDTOs.AccountResponseDTO;
 import com.guru.springsecurity_learning.Enums.AccountStatus;
 import com.guru.springsecurity_learning.Exception.InvalidOperationException;
@@ -13,11 +14,14 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class AccountServiceImpl implements AccountService {
@@ -26,21 +30,21 @@ public class AccountServiceImpl implements AccountService {
     private final CustomerRepository customerRepository;
     private final AccountNumberGenerationService accountNumberGenerationService;
     private final String defaultBranchCode;
-    private final ModelMapper modelMapper;
     private final CurrentUserService currentUserService;
+    private final ModelMapper modelMapper;
 
     public AccountServiceImpl(
             AccountRepository accountRepository,
             CustomerRepository customerRepository,
             AccountNumberGenerationService accountNumberGenerationService,
             @Value("${bank.default.branch-code}") String defaultBranchCode,
-            ModelMapper modelMapper, CurrentUserService currentUserService) {
+            CurrentUserService currentUserService, ModelMapper modelMapper) {
         this.accountRepository = accountRepository;
         this.customerRepository = customerRepository;
         this.accountNumberGenerationService = accountNumberGenerationService;
         this.defaultBranchCode = defaultBranchCode;
-        this.modelMapper = modelMapper;
         this.currentUserService = currentUserService;
+        this.modelMapper = modelMapper;
     }
 
 
@@ -122,14 +126,29 @@ public class AccountServiceImpl implements AccountService {
 
 
     @Override
-    public List<AccountResponseDTO> myAccounts() {
+    public AccountListResponseDTO myAccounts(int page, int size, String sortBy, String direction) {
 
         Customer currentCustomer = currentUserService.getCurrentCustomer();
-        List<Account> accounts=accountRepository.findByCustomer(currentCustomer);
+        Sort sort = direction.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        Page<Account> accounts=accountRepository.findByCustomer(currentCustomer,pageable);
         if(accounts.isEmpty()){
             throw new EntityNotFoundException("You don't have any accounts..! please create one..");
         }
-        return accounts.stream().map(this::mapToResponse).collect(Collectors.toList());
+       List<AccountResponseDTO> accountResponseDTOList = accounts.getContent().stream().map(this::mapToResponse).toList();
+
+        AccountListResponseDTO accountListResponseDTO = new AccountListResponseDTO();
+        accountListResponseDTO.setAccounts(accountResponseDTOList);
+        accountListResponseDTO.setPageNumber(accounts.getNumber());
+        accountListResponseDTO.setPageSize(accounts.getSize());
+        accountListResponseDTO.setTotalPages(accounts.getTotalPages());
+        accountListResponseDTO.setTotalElements(accounts.getTotalElements());
+        accountListResponseDTO.setLast(accounts.isLast());
+        return accountListResponseDTO;
     }
 
     @Override
@@ -138,6 +157,16 @@ public class AccountServiceImpl implements AccountService {
         Account account=accountRepository.findByIdAndCustomer(accountId,currentCustomer).orElseThrow(() -> new EntityNotFoundException("Account not found"));
         return mapToResponse(account);
     }
+
+    @Override
+    public String getBalance(Long accountId) {
+        Customer currentCustomer = currentUserService.getCurrentCustomer();
+        Account account=accountRepository.findByIdAndCustomer(accountId,currentCustomer).orElseThrow(() -> new EntityNotFoundException("Account not found"));
+        return "Fetched Balance:: "+account.getBalance().toString();
+
+    }
+
+
 
 
     private AccountResponseDTO mapToResponse(Account account) {
