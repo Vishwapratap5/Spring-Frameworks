@@ -8,6 +8,8 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.web.servlet.view.InternalResourceViewResolver;
+
 
 @Configuration
 @ComponentScan(basePackages = "com.guru")
@@ -33,5 +35,13 @@ public class SpringConfig {
     @Bean
     public JdbcTemplate jdbcTemplate() {
         return new JdbcTemplate(dataSource());
+    }
+
+    @Bean
+    public InternalResourceViewResolver getViewResolver(){
+        InternalResourceViewResolver vr=new InternalResourceViewResolver();
+        vr.setPrefix("/WEB-INF/views/");
+        vr.setSuffix(".jsp");
+        return vr;
     }
 }
